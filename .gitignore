@@ -8,8 +8,10 @@
 *.sln.docstates
 
 # Build output
-/bin/
-/obj/
+/backend/FinanceTracker.Api/obj/
+/backend/FinanceTracker.Api/bin/
+/backend/FinanceTracker.Api/Middleware/
+/backend/FinanceTracker.Api/appsettings.json
 /out/
 
 # ASP.NET Core
