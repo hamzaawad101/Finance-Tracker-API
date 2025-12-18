@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "hIeejXrSZdRYt4hUWmkwTynDY7xjyQ8u82Z9yg4soCQ=",
+  "Source": "FinanceTracker.Api",
+  "BasePath": "_content/FinanceTracker.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

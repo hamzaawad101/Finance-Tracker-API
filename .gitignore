@@ -1,0 +1,77 @@
+# =========================
+# Visual Studio / .NET Core
+# =========================
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output
+/bin/
+/obj/
+/out/
+
+# ASP.NET Core
+wwwroot/lib/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# =========================
+# User secrets & env files
+# =========================
+secrets.json
+.env
+
+# ASP.NET Core environment-specific settings
+appsettings.Development.json
+appsettings.Local.json
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# MongoDB local files (if any)
+*.lock
+*.dump
+
+# =========================
+# Frontend / Node / React
+# =========================
+node_modules/
+dist/
+build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Optional: VS Code
+# =========================
+.vscode/
+
+# =========================
+# Optional: JetBrains IDEs
+# =========================
+.idea/
