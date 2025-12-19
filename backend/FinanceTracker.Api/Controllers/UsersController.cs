@@ -37,28 +37,17 @@ namespace FinanceTracker.Api.Controllers
             return Ok(user);
         }
 
-        [HttpPost("login")]
+       [HttpPost("login")]
         public ActionResult Login([FromBody] LoginRequest request)
         {
-       
             var user = _mongoService.Users
                 .Find(u => u.Email == request.Email)
                 .FirstOrDefault();
 
-            if (user == null)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
-                return Unauthorized("Invalid email or password");
-            }
-
-
-            bool passwordValid = BCrypt.Net.BCrypt.Verify(
-                request.Password,
-                user.Password
-            );
-
-            if (!passwordValid)
-            {
-                return Unauthorized("Invalid email or password");
+           
+                return Unauthorized(new { message = "Invalid email or password" });
             }
 
             return Ok(new
@@ -66,9 +55,11 @@ namespace FinanceTracker.Api.Controllers
                 message = "Login successful",
                 userId = user.Id,
                 email = user.Email,
-                name = user.Name
+                name = user.Name,
+                token = "FAKE_JWT_OR_GENERATE_REAL_ONE"
             });
         }
+
         [HttpPost]
         public ActionResult<User> CreateUser([FromBody] User newUser)
         {
