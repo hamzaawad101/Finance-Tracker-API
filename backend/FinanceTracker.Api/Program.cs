@@ -29,8 +29,17 @@ builder.Services.AddSingleton<MongoDbService>(sp =>
     var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>();
     return new MongoDbService(settings);
 });
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // React dev server
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -40,7 +49,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-//app.UseMiddleware<TransactionAuthMiddleware>();
+app.UseCors();
+
+// app.UseMiddleware<TransactionAuthMiddleware>();
 
 app.MapControllers();
 
