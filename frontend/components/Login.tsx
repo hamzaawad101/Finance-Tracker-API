@@ -1,40 +1,73 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
 
-  const handleLogin = async () => {
+    axios
+      .get('/user/me')
+      .then(() => navigate('/'))
+      .catch(() => localStorage.removeItem('token'));
+  }, [navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      const response = await axios.post('/user/login', {
-        email: email,
-        password: password,
+      const res = await axios.post('/user/login', {
+        email,
+        password,
       });
-
-      console.log('Login success:', response.data);
-    } catch (error) {
-      console.log('Login failed:', error);
+      console.log('Login successful:', res.data);
+      localStorage.setItem('token', res.data.token);
+      navigate('/');
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error('Login failed:', err.message);
+        setError(err.message);
+      } else {
+        console.error('Login failed: unknown error');
+        setError('Login failed');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
+    <form onSubmit={handleLogin}>
       <input
-        placeholder="Email"
+        type="email"
         value={email}
+        placeholder="Email"
         onChange={(e) => setEmail(e.target.value)}
+        required
       />
 
       <input
-        placeholder="Password"
         type="password"
         value={password}
+        placeholder="Password"
         onChange={(e) => setPassword(e.target.value)}
+        required
       />
 
-      <button onClick={handleLogin}>Login</button>
-    </div>
+      {error && <p>{error}</p>}
+
+      <button type="submit" disabled={loading}>
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
   );
 }
 

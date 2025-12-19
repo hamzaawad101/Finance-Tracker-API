@@ -48,11 +48,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseCors();
-
-// app.UseMiddleware<TransactionAuthMiddleware>();
-
+app.UseMiddleware<TransactionAuthMiddleware>();
 app.MapControllers();
+
 
 app.Run();
