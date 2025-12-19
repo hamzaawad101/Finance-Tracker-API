@@ -57,8 +57,7 @@ appsettings.Local.json
 # Frontend / Node / React
 # =========================
 node_modules/
-frontend/package.json
-package-lock.json
+/frontend/package-lock.json
 dist/
 build/
 .env.local
