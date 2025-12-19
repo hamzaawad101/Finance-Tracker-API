@@ -60,14 +60,22 @@ namespace FinanceTracker.Api.Controllers
             });
         }
 
-        [HttpPost]
+         [HttpPost("signup")]
         public ActionResult<User> CreateUser([FromBody] User newUser)
         {
+            // Check if email already exists
+            var existingUser = _mongoService.Users.Find(u => u.Email == newUser.Email).FirstOrDefault();
+            if (existingUser != null)
+            {
+                return Conflict(new { message = "Email already in use" });
+            }
+
             newUser.Id = Guid.NewGuid().ToString();
-             newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
+            newUser.Password = BCrypt.Net.BCrypt.HashPassword(newUser.Password);
             _mongoService.Users.InsertOne(newUser);
             return CreatedAtAction(nameof(GetUserById), new { id = newUser.Id }, newUser);
         }
+
         [HttpPatch("{id}")]
         public ActionResult<User> UpdateUser(string id, [FromBody] User updatedUser)
         {
