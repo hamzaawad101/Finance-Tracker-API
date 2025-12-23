@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System;
 using MongoDB.Driver;
 using BCrypt.Net;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 using FinanceTracker.Api.Models;
 using FinanceTracker.Api.Services;
@@ -37,28 +41,56 @@ namespace FinanceTracker.Api.Controllers
             return Ok(user);
         }
 
-       [HttpPost("login")]
-        public ActionResult Login([FromBody] LoginRequest request)
+      [HttpPost("login")]
+public ActionResult Login([FromBody] LoginRequest request)
+{
+    var user = _mongoService.Users
+        .Find(u => u.Email == request.Email)
+        .FirstOrDefault();
+
+    
+    if (user == null ||
+    string.IsNullOrEmpty(request.Password) ||
+    string.IsNullOrEmpty(user.Password) ||
+    !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+    {
+        return Unauthorized(new { message = "Invalid email or password" });
+    }
+
+    var jwtKey = HttpContext.RequestServices
+    .GetRequiredService<IConfiguration>()["Jwt:Key"];
+
+    if (string.IsNullOrEmpty(jwtKey))
+    {
+        throw new InvalidOperationException("JWT Key is missing");
+    }
+
+    var key = Encoding.UTF8.GetBytes(jwtKey);
+
+
+    var tokenDescriptor = new SecurityTokenDescriptor
+    {
+        Subject = new ClaimsIdentity(new[]
         {
-            var user = _mongoService.Users
-                .Find(u => u.Email == request.Email)
-                .FirstOrDefault();
+            new Claim("id", user.Id),
+            new Claim(ClaimTypes.Email, user.Email)
+        }),
+        Expires = DateTime.UtcNow.AddMinutes(60),
+        SigningCredentials = new SigningCredentials(
+            new SymmetricSecurityKey(key),
+            SecurityAlgorithms.HmacSha256Signature
+        )
+    };
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
-            {
-           
-                return Unauthorized(new { message = "Invalid email or password" });
-            }
+    var tokenHandler = new JwtSecurityTokenHandler();
+    var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new
-            {
-                message = "Login successful",
-                userId = user.Id,
-                email = user.Email,
-                name = user.Name,
-                token = "FAKE_JWT_OR_GENERATE_REAL_ONE"
-            });
-        }
+    return Ok(new
+    {
+        message = "Login successful",
+        token = tokenHandler.WriteToken(token)
+    });
+}
 
          [HttpPost("signup")]
         public ActionResult<User> CreateUser([FromBody] User newUser)

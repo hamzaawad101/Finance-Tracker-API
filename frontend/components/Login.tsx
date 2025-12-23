@@ -12,9 +12,11 @@ function Login() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
+
     api
       .get('/user/me')
-      .then(() => navigate('/'))
+      .then(() => navigate('/dashboard'))
+
       .catch(() => localStorage.removeItem('token'));
   }, [navigate]);
   const handleLogin = async (e: React.FormEvent) => {
@@ -25,7 +27,7 @@ function Login() {
       const res = await api.post('/user/login', { email, password });
       console.log('Login successful:', res.data);
       localStorage.setItem('token', res.data.token);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       if (isAxiosError(err)) {
         setError(err.response?.data?.message || 'Invalid email or password.');
