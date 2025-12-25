@@ -69,70 +69,59 @@ function TransactionTable() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end gap-4 rounded-xl border bg-white p-6 shadow-sm">
-        {/* Month Selector */}
-        <div>
-          <label className="block text-sm font-medium text-gray-600">
-            Month
-          </label>
-          <input
-            type="month"
-            value={activeMonth}
-            onChange={(e) => setActiveMonth(e.target.value)}
-            className="mt-1 rounded-md border px-3 py-2 text-sm"
-          />
-        </div>
+      <div className="flex flex-wrap items-center gap-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 p-5 text-white shadow-md">
+        {/* Month */}
+        <input
+          type="month"
+          value={activeMonth}
+          onChange={(e) => setActiveMonth(e.target.value)}
+          className="rounded-md bg-white/90 px-3 py-2 text-sm text-gray-900"
+        />
 
         {/* Search */}
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-600">
-            Search
-          </label>
-          <input
-            type="text"
-            placeholder="Search by type or date..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-          />
+        <input
+          type="text"
+          placeholder="Search type or date..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 min-w-[180px] rounded-md bg-white/90 px-3 py-2 text-sm text-gray-900"
+        />
+
+        {/* Type */}
+        <select
+          value={type}
+          onChange={(e) => setType(e.target.value as Transaction['type'])}
+          className="rounded-md bg-white/90 px-3 py-2 text-sm text-gray-900"
+        >
+          <option value="Rent">Rent</option>
+          <option value="Groceries">Groceries</option>
+          <option value="Entertainment">Entertainment</option>
+        </select>
+
+        {/* Amount */}
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          className="w-28 rounded-md bg-white/90 px-3 py-2 text-sm text-gray-900"
+        />
+
+        {/* Add Button */}
+        <button
+          onClick={addTransaction}
+          className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+        >
+          Add
+        </button>
+
+        {/* Total */}
+        <div className="ml-auto text-right">
+          <p className="text-xs uppercase tracking-wide opacity-80">
+            Monthly Total
+          </p>
+          <p className="text-2xl font-bold">${total.toFixed(2)}</p>
         </div>
-
-        {/* Add Transaction */}
-        <div className="flex gap-2">
-          <select
-            value={type}
-            onChange={(e) => setType(e.target.value as Transaction['type'])}
-            className="rounded-md border px-3 py-2 text-sm"
-          >
-            <option value="Rent">Rent</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Entertainment">Entertainment</option>
-          </select>
-
-          <input
-            type="number"
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
-            className="w-28 rounded-md border px-3 py-2 text-sm"
-          />
-
-          <button
-            onClick={addTransaction}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-
-      <div className="rounded-xl border bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-gray-500">
-          Total for {activeMonth}
-        </p>
-        <p className="mt-3 text-4xl font-bold text-gray-900">
-          ${total.toFixed(2)}
-        </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
