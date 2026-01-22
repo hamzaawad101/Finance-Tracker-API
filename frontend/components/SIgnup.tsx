@@ -9,17 +9,30 @@ function Signup() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     try {
       const res = await api.post('/user/signup', { name, email, password });
-      console.log('Signup successful:', res.data);
-      navigate('/login');
+
+      // Axios treats 201 as success, so this should work
+      if (res.status === 201) {
+        setSuccess('Signup successful! Redirecting to login...');
+        console.log('Signup successful:', res.data);
+
+        // Wait 1 second so user sees success message
+        setTimeout(() => {
+          navigate('/login');
+        }, 1000);
+      } else {
+        setError('Signup failed. Please try again.');
+      }
     } catch (err) {
       if (isAxiosError(err)) {
         setError(err.response?.data?.message || 'Signup failed.');
@@ -61,6 +74,7 @@ function Signup() {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {success && <p className="text-green-500 text-sm">{success}</p>}
           <button
             type="submit"
             disabled={loading}

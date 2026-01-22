@@ -5,9 +5,7 @@ function Dashboard() {
     <div>
       <div>
         <TransactionTable></TransactionTable>
-        <div>
-          <h1>spending</h1>
-        </div>
+
         <div>
           <h1></h1>
         </div>
